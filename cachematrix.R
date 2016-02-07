@@ -6,14 +6,22 @@
 makeCacheMatrix <- function(x = matrix()) {
   inv <- NULL
   
-  set <- function(y) {
+  set <- function(y) { # set value & reset cached value delegate function
     x <<- y
     inv <<- NULL
   }
-  get <- function() x
   
-  setinv <- function(i) inv <<- i
-  getinv <- function() inv
+  get <- function() { # get value delegate function
+    x
+  }
+  
+  setinv <- function(i) { # set cached value delegate function
+    inv <<- i
+  }
+  
+  getinv <- function() { # get cached value delegate function
+    inv
+  }
   
   list(set = set, get = get, setinv = setinv, getinv = getinv)
 }
@@ -21,17 +29,17 @@ makeCacheMatrix <- function(x = matrix()) {
 ## Matrix solve fuction with chaching
 
 cacheSolve <- function(x, ...) {
-  inv <- x$getinv()
+  inv <- x$getinv() # get cached value; can be empty
   
-  if(!is.null(inv)) {
+  if(!is.null(inv)) { # check: is cache not empty  
     message("used cached data")
-  } else {
+  } else { # if empty, solve matrix & set cache
     message("solving and set cache")
     data <- x$get()
     inv <- solve(data, ...)
     x$setinv(inv)
   }
   
-  inv
+  inv # return final value
 }
 
